@@ -1,74 +1,76 @@
 # go-status
 
-轻量级 AI 模型状态监控面板，单文件部署，零外部依赖（除 SQLite）。支持多分组、多模型、Uptime Kuma 兼容推送。支持newapi识别
+English | [中文](./readme_ZH.md)
 
-## 快速开始
+A lightweight AI model status monitoring panel. Single-file deployment, zero external dependencies (except SQLite). Supports multi-group, multi-model monitoring with Uptime Kuma-compatible push. Compatible with NewAPI.
+
+## Quick Start
 
 ```bash
-# 复制配置模板
+# Copy config template
 cp config.template.json config.json
-# 编辑 config.json 填入你的模型和密钥
-# 直接运行
+# Edit config.json with your models and API keys
+# Run directly
 go run .
-# 访问 http://localhost:8080
+# Visit http://localhost:8080
 ```
 
-## 编译
+## Build
 
 ```powershell
 # Windows
 $env:CGO_ENABLED="0"
 go build -ldflags "-s -w" -o status-windows-amd64.exe .
 
-# Linux 交叉编译
+# Linux cross-compile
 $env:CGO_ENABLED="0"
 $env:GOOS="linux"
 $env:GOARCH="amd64"
 go build -ldflags "-s -w" -o status-linux-amd64 .
 ```
 
-编译产物为单个可执行文件 + `status.html`，部署时放在同目录即可。
+Build output is a single executable + `status.html`. Just place them in the same directory to deploy.
 
-## 配置说明
+## Configuration
 
-配置文件为 `config.json`（已加入 `.gitignore`），模板见 `config.template.json`。
+Config file is `config.json`. See `config.template.json` for a template.
 
-### 完整结构
+### Full Structure
 
 ```jsonc
 {
-  "port": 8080,                      // 监听端口，默认 8080，重启生效
-  "interval": 60,                    // 检测间隔（秒），默认 60
-  "frontend": {                      // 前端展示配置
-    "title": "My API Status",        // 页面标题（同时用于 <title> 和 <h1>）
-    "icon": "https://example.com/icon.png",  // favicon 和 logo，留空则不显示
-    "subtitle": "实时监控各模型可用性",        // 标题下方副标题
-    "footer": "&copy; 2026 <a href=\"/\">Home</a>"  // 页脚，支持 HTML
+  "port": 8080,                      // Listen port, default 8080, requires restart
+  "interval": 60,                    // Check interval in seconds, default 60
+  "frontend": {                      // Frontend display config
+    "title": "My API Status",        // Page title (used for both <title> and <h1>)
+    "icon": "https://example.com/icon.png",  // Favicon and logo, empty to hide
+    "subtitle": "Real-time service monitoring", // Subtitle below the heading
+    "footer": "&copy; 2026 <a href=\"/\">Home</a>"  // Footer, supports HTML
   },
-  "kuma": {                          // Uptime Kuma 推送配置（可选）
+  "kuma": {                          // Uptime Kuma push config (optional)
     "baseURL": "https://status.example.com",
     "slug": "my-status-page"
   },
-  "groups": [ /* 见下方 */ ]
+  "groups": [ /* see below */ ]
 }
 ```
 
-### groups 结构
+### groups Structure
 
 ```jsonc
 {
-  "name": "OpenAI",              // 一级分组名
+  "name": "OpenAI",              // Top-level group name
   "subGroups": [
     {
-      "name": "GPT-4o",          // 二级分组名（页面上显示的模型名）
-      "kumaSlug": "gpt-4o",      // Uptime Kuma 独立推送 slug（可选）
+      "name": "GPT-4o",          // Sub-group name (displayed as model name on page)
+      "kumaSlug": "gpt-4o",      // Uptime Kuma independent push slug (optional)
       "models": [
         {
-          "id": "gpt-4o",        // 模型 ID，用于 API 调用
-          "provider": "openai-compat",  // 协议类型
+          "id": "gpt-4o",        // Model ID for API calls
+          "provider": "openai-compat",  // Protocol type
           "baseURL": "https://api.openai.com/v1",
           "key": "sk-xxx",       // API Key
-          "timeout": 30          // 超时秒数，默认 30
+          "timeout": 30          // Timeout in seconds, default 30
         }
       ]
     }
@@ -76,18 +78,18 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 }
 ```
 
-### 支持的 Provider（协议）
+### Supported Providers
 
-| provider | 说明 | 调用端点 |
+| provider | Description | Endpoint |
 |---|---|---|
-| `openai-compat` | OpenAI 兼容协议（默认） | `POST {baseURL}/chat/completions` |
+| `openai-compat` | OpenAI-compatible protocol (default) | `POST {baseURL}/chat/completions` |
 | `openai-response` | OpenAI Responses API | `POST {baseURL}/responses` |
 | `google` | Google Gemini API | `POST {baseURL}/models/{id}:generateContent` |
 | `anthropic` | Anthropic Claude API | `POST {baseURL}/messages` |
 
-### 配置示例
+### Configuration Examples
 
-**OpenAI 兼容（大多数中转站）：**
+**OpenAI-compatible (most proxy services):**
 
 ```json
 {
@@ -99,7 +101,7 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 }
 ```
 
-**Anthropic Claude：**
+**Anthropic Claude:**
 
 ```json
 {
@@ -111,7 +113,7 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 }
 ```
 
-**Google Gemini：**
+**Google Gemini:**
 
 ```json
 {
@@ -123,7 +125,7 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 }
 ```
 
-**OpenAI Responses API（Codex 等新端点）：**
+**OpenAI Responses API (Codex):**
 
 ```json
 {
@@ -135,22 +137,22 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 }
 ```
 
-## API 协议
+## API Endpoints
 
-| 端点 | 说明 |
+| Endpoint | Description |
 |---|---|
-| `GET /` | 状态面板页面 |
-| `GET /api/status` | 状态数据（前端轮询） |
-| `GET /api/config` | 配置信息（interval + frontend） |
-| `GET /api/status-page/{slug}` | Uptime Kuma 兼容状态页 |
-| `GET /api/status-page/heartbeat/{slug}` | Uptime Kuma 兼容心跳数据 |
+| `GET /` | Status dashboard page |
+| `GET /api/status` | Status data (polled by frontend) |
+| `GET /api/config` | Config info (interval + frontend) |
+| `GET /api/status-page/{slug}` | Uptime Kuma-compatible status page |
+| `GET /api/status-page/heartbeat/{slug}` | Uptime Kuma-compatible heartbeat data |
 
-### `/api/status` 响应结构
+### `/api/status` Response
 
 ```jsonc
 {
   "title": "My API Status",
-  "overall": { "status": "up", "label": "运行正常" },
+  "overall": { "status": "up", "label": "Running" },
   "last_completed_at": "2026-06-07T12:00:00Z",
   "checking": false,
   "sections": [
@@ -161,7 +163,7 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
           "name": "gpt-4o",
           "sub_name": "GPT-4o",
           "status": "up",
-          "label": "正常",
+          "label": "Normal",
           "health_score": 99.5,
           "latency_ms": 230,
           "last_checked_at": "2026-06-07T12:00:00Z",
@@ -173,9 +175,9 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 }
 ```
 
-`status` 字段取值：`up` / `down` / `degraded` / `unknown`
+`status` values: `up` / `down` / `degraded` / `unknown`
 
-### `/api/config` 响应结构
+### `/api/config` Response
 
 ```jsonc
 {
@@ -189,30 +191,40 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 }
 ```
 
-## Uptime Kuma 集成
+## Uptime Kuma Integration
 
-支持两种推送模式：
+Two push modes supported:
 
-1. **全局推送**：配置 `kuma.baseURL` 和 `kuma.slug`，所有模型的平均状态推送到一个 slug
-2. **子组独立推送**：在 `subGroups` 中设置 `kumaSlug`，每个子组独立推送
+1. **Global push**: Set `kuma.baseURL` and `kuma.slug` to push the average status of all models to one slug
+2. **Per-subgroup push**: Set `kumaSlug` in each subGroup for independent push per group
 
-同时兼容 NewAPI 等使用 Uptime Kuma 公开状态页协议的工具，提供 `/api/status-page/` 和 `/api/status-page/heartbeat/` 端点。
+Also compatible with NewAPI and other tools using the Uptime Kuma public status page protocol, providing `/api/status-page/` and `/api/status-page/heartbeat/` endpoints.
 
-## 前端定制
+## Frontend Customization
 
-`frontend` 配置节控制页面所有品牌元素，无需修改 HTML：
+The `frontend` config section controls all branding elements without modifying HTML:
 
-- `title`：浏览器标签标题 + 页面主标题
-- `icon`：favicon + 页面 logo（留空则隐藏 logo 区域）
-- `subtitle`：标题下方说明文字
-- `footer`：页脚内容，支持内联 HTML
+- `title`: Browser tab title + page main heading
+- `icon`: Favicon + page logo (hidden when empty)
+- `subtitle`: Text below the heading
+- `footer`: Footer content, supports inline HTML
 
-## 技术栈
+## Tech Stack
 
-- Go（单文件，`modernc.org/sqlite` 纯 CGO-free SQLite 驱动）
-- 纯 HTML/CSS/JS，无前端框架依赖
-- 数据存储：本地 SQLite（`status.db`）
+- Go (single file, `modernc.org/sqlite` CGO-free SQLite driver)
+- Pure HTML/CSS/JS, no frontend framework dependencies
+- Storage: local SQLite (`status.db`)
 
 ## License
 
 [MIT](./LICENSE)
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=tianjiangqiji%2Fgo-status&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=tianjiangqiji/go-status&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=tianjiangqiji/go-status&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=tianjiangqiji/go-status&type=date&legend=top-left" />
+ </picture>
+</a>
