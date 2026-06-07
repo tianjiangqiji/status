@@ -4,6 +4,16 @@ English | [中文](./readme_ZH.md)
 
 A lightweight AI model status monitoring panel. Single-file deployment, zero external dependencies (except SQLite). Supports multi-group, multi-model monitoring with Uptime Kuma-compatible push. Compatible with NewAPI.
 
+## Demo
+
+**Web Dashboard**
+
+![Web Dashboard](./img/web.png)
+
+**NewAPI Compatible**
+
+![NewAPI Compatible](./img/newapi.png)
+
 ## Quick Start
 
 ```bash

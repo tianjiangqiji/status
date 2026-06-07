@@ -4,6 +4,16 @@
 
 轻量级 AI 模型状态监控面板，单文件部署，零外部依赖（除 SQLite）。支持多分组、多模型、Uptime Kuma 兼容推送。支持 NewAPI 识别。
 
+## 演示
+
+**Web 面板**
+
+![Web 面板](./img/web.png)
+
+**NewAPI 兼容**
+
+![NewAPI 兼容](./img/newapi.png)
+
 ## 快速开始
 
 ```bash
