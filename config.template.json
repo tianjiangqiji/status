@@ -1,0 +1,34 @@
+{
+  "port": 8080,
+  "interval": 60,
+  "frontend": {
+    "title": "Service Status",
+    "icon": "",
+    "subtitle": "Real-time service availability monitoring",
+    "footer": "&copy; 2026 <a href=\"/\">Home</a>"
+  },
+  "kuma": {
+    "baseURL": "",
+    "slug": ""
+  },
+  "groups": [
+    {
+      "name": "Example Group",
+      "subGroups": [
+        {
+          "name": "Example SubGroup",
+          "kumaSlug": "",
+          "models": [
+            {
+              "id": "model-id",
+              "provider": "openai-compat",
+              "baseURL": "https://api.example.com/v1",
+              "key": "sk-your-key-here",
+              "timeout": 30
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+# Config (contains secrets)
+config.json
+
+# Database
+*.db
+status.db
+
+# Build outputs
+status-windows-amd64.exe
+status-linux-amd64
+status.exe
+status
+
+# Go
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

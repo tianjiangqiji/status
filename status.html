@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loading...</title>
+<link id="favicon" rel="icon" type="image/png" href="" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#0a0a0a;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:0;
+  padding-top:6px;
+  position:relative;
+  overflow-x:hidden;
+}
+#pixel-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;image-rendering:pixelated;pointer-events:none}
+.top-bar{position:fixed;top:0;left:0;width:100%;height:64px;background:#28c070;z-index:9999;border-bottom:4px solid #1a1a2e;box-shadow:0 4px 0 0 #1e9054,0 8px 0 0 #147038}
+.container{position:relative;z-index:1;max-width:1100px;width:100%;padding:40px;padding-top:10vh;background:#fff;box-shadow:0 0 0 4px #0a0a0a,8px 8px 0 0 rgba(50,240,140,.3);margin:80px auto 40px;animation:slideIn .6s ease-out}
+@keyframes slideIn{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+h1{text-align:center;margin-bottom:16px;font-size:32px;font-weight:800;letter-spacing:3px;color:#000;position:relative}
+h1::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:60%;height:4px;background:#32f08c;box-shadow:4px 4px 0 0 #28c070}
+.logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px}
+.logo img{width:48px;height:48px;image-rendering:pixelated;box-shadow:3px 3px 0 0 #000}
+.subtitle{color:#444;text-align:center;margin-bottom:30px;font-size:14px;font-family:'Courier New',Consolas,monospace;letter-spacing:2px}
+.subtitle::before{content:'[ ';color:#32f08c;font-weight:900}
+.subtitle::after{content:' ]';color:#32f08c;font-weight:900}
+
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:28px;align-items:end;border-bottom:4px solid #000;padding:10px 0 24px;margin-bottom:18px}
+.eyebrow{margin:0 0 10px;color:#28c070;font-size:12px;font-weight:800;text-transform:uppercase;font-family:'Courier New',Consolas,monospace}
+.hero-line{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;color:#444;font-size:14px;font-family:'Courier New',Consolas,monospace}
+.state-dot{width:10px;height:10px;display:inline-block;background:#32f08c;box-shadow:0 0 0 4px rgba(50,240,140,.25)}
+.state-dot.down{background:#e74c3c;box-shadow:0 0 0 4px rgba(231,76,60,.25)}
+.state-dot.degraded{background:#f1c40f;box-shadow:0 0 0 4px rgba(241,196,15,.25)}
+.dial{justify-self:end;width:230px;min-height:120px;border:3px solid #000;background:#fafafa;padding:18px;position:relative;box-shadow:4px 4px 0 0 #32f08c}
+.dial::before{content:'';position:absolute;top:-3px;left:-3px;width:8px;height:8px;background:#32f08c}
+.dial-label{color:#444;font-size:12px;font-weight:800;text-transform:uppercase;font-family:'Courier New',Consolas,monospace}
+.dial-score{margin-top:12px;font-size:48px;line-height:.9;font-weight:900;color:#000}
+.dial-status{margin-top:12px;color:#444;font-size:14px;display:flex;justify-content:space-between;gap:14px;font-family:'Courier New',Consolas,monospace}
+
+.overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.signal{min-height:70px;padding:14px;border:3px solid #000;background:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:10px;position:relative;box-shadow:3px 3px 0 0 #ddd}
+.signal::before{content:'';position:absolute;top:-3px;left:-3px;width:6px;height:6px;background:#32f08c}
+.signal-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:800}
+.signal-meta{display:flex;justify-content:space-between;gap:12px;color:#666;font-size:12px;font-family:'Courier New',Consolas,monospace}
+
+.section{margin-top:24px}
+.section-title{display:flex;align-items:center;justify-content:space-between;color:#444;font-size:13px;font-weight:900;text-transform:uppercase;padding:0 0 10px;font-family:'Courier New',Consolas,monospace}
+.scale{color:#888;font-weight:700;text-transform:none}
+.lanes{border-top:3px solid #000}
+.lane{min-height:80px;display:grid;grid-template-columns:200px minmax(200px,1fr) 100px;gap:18px;align-items:center;border-bottom:3px solid #000;background:linear-gradient(90deg,rgba(50,240,140,.06),rgba(50,240,140,.02));padding:14px 0;animation:enter .34s ease both}
+.lane-head{display:flex;align-items:center;gap:10px;min-width:0;padding-left:4px}
+.mark{width:12px;height:32px;background:#32f08c;box-shadow:3px 3px 0 0 rgba(50,240,140,.3)}
+.mark.degraded{background:#f1c40f;box-shadow:3px 3px 0 0 rgba(241,196,15,.3)}
+.mark.down{background:#e74c3c;box-shadow:3px 3px 0 0 rgba(231,76,60,.3)}
+.mark.unknown{background:#bbb;box-shadow:none}
+.lane-name{min-width:0}
+.lane-name strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px}
+.lane-name span{display:block;margin-top:4px;color:#666;font-size:11px;font-family:'Courier New',Consolas,monospace}
+.rail{min-width:0}
+.track{position:relative;height:32px;display:flex;gap:2px;align-items:flex-end;padding:4px 0}
+.track::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(0,0,0,.15)}
+.seg{position:relative;z-index:1;flex:1;min-width:3px;border-radius:0;background:#ddd;transition:all .15s ease}
+.seg.up{background:#32f08c}
+.seg.degraded{background:#f1c40f}
+.seg.down{background:#e74c3c}
+.seg.unknown{background:#ddd}
+.now-pin{position:absolute;right:0;top:0;bottom:0;width:2px;background:#28c070;box-shadow:0 0 8px rgba(40,192,112,.6)}
+.time-row{display:flex;justify-content:space-between;color:#888;font-size:11px;font-family:'Courier New',Consolas,monospace;margin-top:4px}
+.score{text-align:right;padding-right:4px}
+.score b{display:block;font-size:24px;line-height:1}
+.score span{display:block;margin-top:6px;color:#666;font-size:12px;font-family:'Courier New',Consolas,monospace}
+.empty{padding:34px 0;color:#666;font-size:14px;border-top:3px solid #000;font-family:'Courier New',Consolas,monospace}
+.footer{text-align:center;margin-top:30px;padding-top:20px;border-top:4px solid #000;color:#555;font-size:13px;position:relative}
+.footer::before{content:'';position:absolute;top:-4px;left:10%;width:10px;height:10px;background:#32f08c}
+.footer a{color:#000;text-decoration:none;font-weight:500}
+.footer a:hover{background:#32f08c;padding:0 4px;box-shadow:2px 2px 0 0 #28c070}
+
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:820px){
+  .hero{grid-template-columns:1fr;min-height:0;gap:18px}
+  .dial{width:100%;justify-self:stretch}
+  .overview{grid-template-columns:1fr 1fr}
+  .section-title{align-items:flex-start}
+  .scale{display:none}
+  .lane{grid-template-columns:1fr;gap:10px;padding:14px 0 16px}
+  .lane-head{padding-left:0}
+  .rail{overflow:hidden}
+  .score{text-align:left;display:flex;align-items:baseline;gap:10px;padding-right:0}
+  .score span{margin-top:0}
+}
+@media(max-width:640px){
+  .overview{grid-template-columns:1fr 1fr}
+  .signal{min-height:60px;padding:10px}
+  .signal-name{font-size:12px}
+  .signal-meta{font-size:11px}
+}
+@media(max-width:480px){
+  .container{padding:20px}
+  h1{font-size:22px}
+  .overview{grid-template-columns:1fr 1fr;gap:8px}
+  .signal{min-height:52px;padding:10px}
+  .dial-score{font-size:38px}
+  .hero-line{font-size:12px}
+  .subtitle{font-size:12px}
+  .lane-name strong{font-size:14px}
+  .mark{width:8px;height:24px}
+  .track{height:24px}
+}
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+<canvas id="pixel-canvas"></canvas>
+<div class="container">
+  <div class="logo" id="logoWrap" style="display:none"><img id="logoImg" src="" alt="" /></div>
+  <h1 id="pageTitle"></h1>
+  <div class="subtitle" id="pageSubtitle"></div>
+
+  <header class="hero">
+    <div>
+      <p class="eyebrow">API Network</p>
+      <div class="hero-line"><span id="summaryDot" class="state-dot"></span><span id="summary">正在采样</span><span id="last"></span></div>
+    </div>
+    <aside class="dial">
+      <div class="dial-label">全站平均状况</div>
+      <div id="score" class="dial-score">--</div>
+      <div class="dial-status"><span id="statusText">采样中</span><span id="checkedAt">--</span></div>
+    </aside>
+  </header>
+
+  <section id="overview" class="overview"></section>
+  <section id="app"><div class="empty">正在读取状态...</div></section>
+
+  <div class="footer" id="pageFooter"></div>
+</div>
+
+<script>
+(function(){
+const canvas=document.getElementById('pixel-canvas');
+const ctx=canvas.getContext('2d');
+const PS=24;
+let cols,rows,pixels=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;cols=Math.ceil(canvas.width/PS);rows=Math.ceil(canvas.height/PS);init()}
+function init(){pixels=[];for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)pixels.push({c,r,a:Math.random()*.08+.02,s:Math.random()*.02+.005,o:Math.random()*Math.PI*2})}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);const t=Date.now()*.001;for(let i=0;i<pixels.length;i++){const p=pixels[i];const a=p.a+(Math.sin(t*p.s*60+p.o)*.5+.5)*.06;if(a>.01){ctx.fillStyle='rgba(50,240,140,'+a.toFixed(3)+')';ctx.fillRect(p.c*PS+1,p.r*PS+1,PS-2,PS-2)}}requestAnimationFrame(draw)}
+window.addEventListener('resize',resize);resize();draw()
+})();
+
+const segmentLimit=window.matchMedia('(max-width:820px)').matches?72:120;
+
+function fmtTime(v){if(!v)return'--';const d=new Date(v);if(Number.isNaN(d.getTime()))return'--';return d.toLocaleString('zh-CN',{hour12:false,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function elapsed(v){if(!v)return'';const ms=Date.now()-new Date(v).getTime();if(!Number.isFinite(ms)||ms<0)return'';const min=Math.floor(ms/60000);if(min<1)return'刚刚';if(min<60)return min+' 分钟前';return Math.floor(min/60)+' 小时前'}
+function escapeHtml(t){return String(t).replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
+function pct(v){return Number.isFinite(Number(v))?Number(v).toFixed(1)+'%':'--'}
+function scoreValue(g){return Number.isFinite(Number(g.health_score))?Number(g.health_score):Number(g.uptime||0)}
+
+function segmentStyle(item){
+  const pulse=Number(item&&item.v);
+  if(!Number.isFinite(pulse))return'';
+  const opacity=Math.max(.62,Math.min(1,.46+pulse*.54));
+  return';opacity:'+opacity.toFixed(2);
+}
+function segments(history){
+  const items=Array.isArray(history)?history.slice(-segmentLimit):[];
+  const missing=Math.max(0,segmentLimit-items.length);
+  let html='';
+  for(let i=0;i<missing;i++)html+='<span class="seg unknown" style="height:6px"></span>';
+  for(const item of items){
+    const h=Math.max(6,Math.round(item.v*28));
+    html+='<span class="seg '+(item.s||'unknown')+'" style="height:'+h+'px'+segmentStyle(item)+'"></span>';
+  }
+  return html+'<span class="now-pin"></span>';
+}
+function summarize(sections){
+  const all=[];
+  for(const sec of sections||[])for(const r of sec.rows||[])all.push(r);
+  if(!all.length)return{score:'--',top:[]};
+  // sort by health_score desc, random shuffle for same score
+  all.sort((a,b)=>{
+    const diff=scoreValue(b)-scoreValue(a);
+    if(Math.abs(diff)>0.01)return diff;
+    return Math.random()-0.5;
+  });
+  const average=all.reduce((sum,g)=>sum+scoreValue(g),0)/all.length;
+  return{score:average.toFixed(1)+'%',top:all.slice(0,4)};
+}
+
+let _frontendTitle='Service Status';
+function render(data){
+  document.title=data.title||_frontendTitle;
+  const sections=Array.isArray(data.sections)?data.sections:[];
+  const overall=data.overall||{status:'unknown',label:'采样中'};
+  const summary=summarize(sections);
+  const dot=document.getElementById('summaryDot');
+  dot.className='state-dot '+(overall.status||'unknown');
+  document.getElementById('summary').textContent=overall.label+(data.checking?' · 检测中':'');
+  document.getElementById('last').textContent=data.last_completed_at?('· '+elapsed(data.last_completed_at)):'';
+  document.getElementById('score').textContent=summary.score;
+  document.getElementById('statusText').textContent=overall.label;
+  document.getElementById('checkedAt').textContent=fmtTime(data.last_completed_at);
+
+  document.getElementById('overview').innerHTML=summary.top.map(g=>{
+    return'<div class="signal"><div class="signal-name">'+escapeHtml(g.sub_name||'')+'</div><div class="signal-meta"><span>'+(g.label||'采样中')+'</span><span>'+pct(scoreValue(g))+'</span></div></div>';
+  }).join('');
+
+  if(!sections.length){document.getElementById('app').innerHTML='<div class="empty">暂无可展示分组</div>';return;}
+
+  let output='';
+  for(const sec of sections){
+    const rows=sec.rows||[];
+    if(!rows.length)continue;
+    output+='<section class="section"><div class="section-title"><span>'+escapeHtml(sec.name||'')+'</span><span class="scale">历史采样 → 现在</span></div><div class="lanes">';
+    for(const g of rows){
+      const status=g.status||'unknown';
+      const latency=g.latency_ms?Math.round(g.latency_ms)+'ms':'无延迟样本';
+      const displayName=g.sub_name||g.name||'';
+      output+='<div class="lane"><div class="lane-head"><span class="mark '+status+'"></span><div class="lane-name"><strong title="'+escapeHtml(displayName)+'">'+escapeHtml(displayName)+'</strong><span>'+(g.label||'采样中')+' · '+latency+'</span></div></div><div class="rail"><div class="track">'+segments(g.history)+'</div><div class="time-row"><span>历史</span><span>'+fmtTime(g.last_checked_at)+'</span></div></div><div class="score"><b>'+pct(scoreValue(g))+'</b><span>'+(g.label||'采样中')+'</span></div></div>';
+    }
+    output+='</div></section>';
+  }
+  document.getElementById('app').innerHTML=output;
+}
+
+async function load(){
+  try{
+    const res=await fetch('/api/status',{cache:'no-store'});
+    render(await res.json());
+  }catch(err){
+    document.getElementById('summary').textContent='连接失败';
+  }
+}
+async function initFrontend(){
+  try{
+    const res=await fetch('/api/config',{cache:'no-store'});
+    const cfg=await res.json();
+    const f=cfg.frontend||{};
+    if(f.title){
+      _frontendTitle=f.title;
+      document.title=f.title;
+      document.getElementById('pageTitle').textContent=f.title;
+    }
+    if(f.icon){
+      document.getElementById('favicon').href=f.icon;
+      document.getElementById('logoImg').src=f.icon;
+      document.getElementById('logoWrap').style.display='';
+    }
+    if(f.subtitle){
+      document.getElementById('pageSubtitle').textContent=f.subtitle;
+    }
+    if(f.footer){
+      document.getElementById('pageFooter').innerHTML=f.footer;
+    }
+  }catch(e){}
+}
+async function start(){
+  await initFrontend();
+  load();
+  setInterval(load,20000);
+}
+start();
+</script>
+</body>
+</html>
