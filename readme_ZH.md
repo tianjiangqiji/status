@@ -1,4 +1,4 @@
-# go-status
+# status
 
 [English](./readme.md) | 中文
 
@@ -221,10 +221,10 @@ go build -ldflags "-s -w" -o status-linux-amd64 .
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=tianjiangqiji%2Fgo-status&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=tianjiangqiji%2Fstatus&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=tianjiangqiji/go-status&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=tianjiangqiji/go-status&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=tianjiangqiji/go-status&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=tianjiangqiji/status&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=tianjiangqiji/status&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=tianjiangqiji/status&type=date&legend=top-left" />
  </picture>
 </a>
