@@ -437,6 +437,34 @@ func upsertSectionRow(sections []Section, gName string, row GroupResp) []Section
 	return sections
 }
 
+// pruneStaleSections 根据 config 当前条目移除 sections 中已不存在的 group/subGroup/model 行
+func pruneStaleSections(sections []Section, cfg Config) []Section {
+	// 建立 config 中有效条目的集合: "groupName|subName|modelID"
+	valid := make(map[string]bool)
+	for _, g := range cfg.Groups {
+		for _, sg := range g.SubGroups {
+			for _, m := range sg.Models {
+				valid[g.Name+"|"+sg.Name+"|"+m.ID] = true
+			}
+		}
+	}
+
+	var result []Section
+	for _, sec := range sections {
+		var keptRows []GroupResp
+		for _, row := range sec.Rows {
+			key := sec.Name + "|" + row.SubName + "|" + row.Name
+			if valid[key] {
+				keptRows = append(keptRows, row)
+			}
+		}
+		if len(keptRows) > 0 {
+			result = append(result, Section{Name: sec.Name, Rows: keptRows})
+		}
+	}
+	return result
+}
+
 func refresh() {
 	loadConfig()
 	mu.Lock()
@@ -450,6 +478,9 @@ func refresh() {
 		sections = []Section{}
 	}
 	mu.RUnlock()
+
+	// 根据 config 清理已不存在的条目
+	sections = pruneStaleSections(sections, cfg)
 
 	now := time.Now()
 	totalLat := 0
